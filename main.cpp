@@ -1,10 +1,16 @@
 #include "LFSR.h"
-#include <iomanip>
+#include <fstream>
 int main(int argc, char **argv)
 {
-    int64_t seed=atoi(argv[1]);
-    unsigned int n=atoi(argv[3]);
+    if (argc!=5 ) {
+        throw LFSR_error(string("Wrong arguments"));
+    }
+    int64_t seed=stoull(argv[1]);
+    int n=atoi(argv[3]);
     try {
+        if(n<=0) {
+            throw LFSR_error(string("Длина последовательности меньше или равна 0"));
+        }
         LFSR a (seed);
         string path=argv[4];
         string poli=argv[2];
@@ -14,9 +20,11 @@ int main(int argc, char **argv)
         fout.open(path);
         if(!fout.is_open())
             throw LFSR_error(string("Неверный путь к файлу"));
-        for(unsigned int i=0; i<n; i++){
-            fout<<a.LFSR_Galois(chislo);
-            fout<<" ";
+        for(int i=0; i<n; i++) {
+            if(fout.good()) {
+                fout<<a.LFSR_Galois(chislo);
+                fout<<" ";
+            }
         }
         fout.close();
     } catch(const LFSR_error & e) {
